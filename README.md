@@ -19,4 +19,4 @@ Changelog
 
 1.0 - Initial Release
 
-View the entire changelog [http://cdn.kalebklein.com/sw/changelog.txt](here).
+View the entire changelog [here](http://cdn.kalebklein.com/sw/changelog.txt).
