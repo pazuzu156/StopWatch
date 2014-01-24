@@ -13,4 +13,10 @@ Contributers
 
 Changelog
 ---------
+1.1 - Added a couple buttons into application and cleaned up the design a bit
+	+ Added "View Changelog" button that takes you to the application's chagelog
+	+ Added "Copy Time to Clipboard" button to copy the current elapsed time to the clipboard.
+
 1.0 - Initial Release
+
+View the entire changelog [http://cdn.kalebklein.com/sw/changelog.txt](here).

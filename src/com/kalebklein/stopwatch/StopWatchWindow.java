@@ -1,6 +1,9 @@
 package com.kalebklein.stopwatch;
 
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -23,20 +26,23 @@ import javax.swing.border.EmptyBorder;
 
 public class StopWatchWindow extends JFrame
 {
-	private static final long	serialVersionUID	= -4764744825746547852L;
+	private static final long serialVersionUID = -4764744825746547852L;
+	
+	public static final String VERSION = "1.1";
 
-	boolean						currentTimeTickerOn	= false, stopWatchOn = false, isRestarted = true, isPaused = false;
-	Thread						currentTimeTicker, stopWatchTicker, timeTrackerTicker;
-	StopWatchWindow				context				= this;
-	long						startTime			= 0L, stopTime = 0L, pausedTime = 0L;
+	boolean currentTimeTickerOn = false, stopWatchOn = false, isRestarted = true, isPaused = false;
+	Thread currentTimeTicker, stopWatchTicker, timeTrackerTicker;
+	StopWatchWindow context = this;
+	long startTime = 0L, stopTime = 0L, pausedTime = 0L;
+	String elapsedTimeString = null;
 
 	// Window objects
-	private JPanel				contentPane;
-	private JLabel				lblCurrentTime, lblCurrtime;
-	private JLabel				lblElapsedTime;
-	private JLabel				lblCounter;
-	private JButton				btnStart, btnPause, btnReset, btnAbout;
-	
+	private JPanel contentPane;
+	private JLabel lblCurrentTime, lblCurrtime;
+	private JLabel lblElapsedTime;
+	private JLabel lblCounter;
+	private JButton btnStart, btnPause, btnReset, btnAbout, btnCopyTime;
+
 	private Font appFont;
 	private ImageIcon icon;
 	private boolean fontLoaded = false, iconLoaded = false;
@@ -62,7 +68,7 @@ public class StopWatchWindow extends JFrame
 		{
 			e.printStackTrace();
 		}
-		
+
 		setFonts();
 		setIcon();
 
@@ -70,10 +76,9 @@ public class StopWatchWindow extends JFrame
 		setTitle("StopWatch");
 		setSize(400, 300);
 		setLocationRelativeTo(null);
-		
-		if(iconLoaded)
-			setIconImage(icon.getImage());
-		
+
+		if (iconLoaded) setIconImage(icon.getImage());
+
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -105,7 +110,7 @@ public class StopWatchWindow extends JFrame
 		btnPause.setEnabled(false);
 		btnPause.setBounds(148, 162, 98, 26);
 		contentPane.add(btnPause);
-		
+
 		btnReset = new JButton("Reset");
 		btnReset.setEnabled(false);
 		btnReset.setBounds(271, 162, 98, 26);
@@ -114,27 +119,31 @@ public class StopWatchWindow extends JFrame
 		btnAbout = new JButton("About");
 		btnAbout.setBounds(271, 233, 98, 26);
 		contentPane.add(btnAbout);
+		
+		btnCopyTime = new JButton("Copy Time to Clipboard");
+		btnCopyTime.setBounds(148, 196, 221, 26);
+		contentPane.add(btnCopyTime);
 
 		// Set window's action listeners
 		setWindowActionListeners();
 
 		setVisible(true);
-		
-		
-		if(fontLoaded)
+
+		if (fontLoaded)
 		{
 			lblCounter.setFont(new Font(appFont.getName(), Font.BOLD, 50));
-			btnAbout.setFont(new Font(appFont.getName(), Font.BOLD, 11));
-			btnReset.setFont(new Font(appFont.getName(), Font.BOLD, 11));
-			btnStart.setFont(new Font(appFont.getName(), Font.BOLD, 11));
-			btnPause.setFont(new Font(appFont.getName(), Font.BOLD, 11));
+			btnAbout.setFont(new Font(appFont.getName(), Font.PLAIN, 12));
+			btnReset.setFont(new Font(appFont.getName(), Font.PLAIN, 12));
+			btnStart.setFont(new Font(appFont.getName(), Font.PLAIN, 12));
+			btnPause.setFont(new Font(appFont.getName(), Font.PLAIN, 12));
 			lblCounter.setFont(new Font(appFont.getName(), Font.BOLD, 50));
 			lblElapsedTime.setFont(new Font(appFont.getName(), Font.BOLD, 40));
 			lblCurrtime.setFont(new Font(appFont.getName(), Font.BOLD, 12));
 			lblCurrentTime.setFont(new Font(appFont.getName(), Font.BOLD, 12));
+			btnCopyTime.setFont(new Font(appFont.getName(), Font.PLAIN, 12));
 		}
 	}
-	
+
 	private void setFonts()
 	{
 		try
@@ -143,12 +152,12 @@ public class StopWatchWindow extends JFrame
 			appFont = Font.createFont(Font.TRUETYPE_FONT, is);
 			fontLoaded = true;
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			System.out.println("Error loading fonts! Reverting to defaults.");
 		}
 	}
-	
+
 	private void setIcon()
 	{
 		try
@@ -156,7 +165,7 @@ public class StopWatchWindow extends JFrame
 			icon = new ImageIcon("res/images/icon.png");
 			iconLoaded = true;
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			System.out.println("Error loading icon! Reverting to defaults.");
 		}
@@ -248,13 +257,33 @@ public class StopWatchWindow extends JFrame
 				btnReset.setEnabled(false);
 				btnStart.setText("Start");
 				lblCounter.setText("00:00:00");
+				elapsedTimeString = null;
+			}
+		});
+
+		// Handle an event when the about button is pressed
+		btnAbout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				new AboutWindow();
 			}
 		});
 		
-		// Handle an event when the about button is pressed
-		btnAbout.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new AboutWindow();
+		btnCopyTime.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				if(elapsedTimeString == null)
+				{
+					JOptionPane.showMessageDialog(context, "You need to have started the StopWatch to copy it's time. "
+							+ "If you reset it, time is a 0 again, and there's nothing to copy", "Copy Time Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+				else
+				{
+					StringSelection selection = new StringSelection(elapsedTimeString);
+					Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+					clip.setContents(selection, null);
+				}
 			}
 		});
 	}
@@ -268,17 +297,18 @@ public class StopWatchWindow extends JFrame
 				while (stopWatchOn)
 				{
 					DecimalFormat formatter = new DecimalFormat("00");
-					int seconds = (int) (System.currentTimeMillis() - startTime) / 1000;
-					int days = seconds / 86400,
-							hours = (seconds / 3600) - (days * 24),
-							mins = (seconds / 60) - (days * 1440) - (hours * 60),
-							sec = seconds % 60;
-					String s = new String(formatter.format(hours)
-							+ ":"
-							+ formatter.format(mins)
-							+ ":"
-							+ formatter.format(sec));
+					int tick = (int) (System.currentTimeMillis() - startTime) / 1000;
+					int days = tick / 86400, hours = (tick / 3600) - (days * 24),
+							minutes = (tick / 60) - (days * 1440) - (hours * 60),
+							seconds = tick % 60;
+					String s = new String(formatter.format(hours) + ":" + formatter.format(minutes) + ":"
+							+ formatter.format(seconds));
 					lblCounter.setText(s);
+					elapsedTimeString = String.format("Eclapsed Time: %s days, %s hours, %s minutes, %s seconds",
+							formatter.format(days),
+							formatter.format(hours),
+							formatter.format(minutes),
+							formatter.format(tick));
 				}
 			}
 		};
