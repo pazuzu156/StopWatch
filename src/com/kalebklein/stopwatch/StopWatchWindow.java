@@ -28,7 +28,8 @@ public class StopWatchWindow extends JFrame
 {
 	private static final long serialVersionUID = -4764744825746547852L;
 	
-	public static final String VERSION = "1.1";
+	public static final String VERSION = "1.2";
+	public static final int VERSION_CODE = 3;
 
 	boolean currentTimeTickerOn = false, stopWatchOn = false, isRestarted = true, isPaused = false;
 	Thread currentTimeTicker, stopWatchTicker, timeTrackerTicker;
@@ -265,7 +266,7 @@ public class StopWatchWindow extends JFrame
 		btnAbout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
-				new AboutWindow();
+				new AboutWindow(context);
 			}
 		});
 		
@@ -275,7 +276,7 @@ public class StopWatchWindow extends JFrame
 				if(elapsedTimeString == null)
 				{
 					JOptionPane.showMessageDialog(context, "You need to have started the StopWatch to copy it's time. "
-							+ "If you reset it, time is a 0 again, and there's nothing to copy", "Copy Time Error",
+							+ "If you reset it, time is at 0 again, and there's nothing to copy", "Copy Time Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
 				else
@@ -304,11 +305,11 @@ public class StopWatchWindow extends JFrame
 					String s = new String(formatter.format(hours) + ":" + formatter.format(minutes) + ":"
 							+ formatter.format(seconds));
 					lblCounter.setText(s);
-					elapsedTimeString = String.format("Eclapsed Time: %s days, %s hours, %s minutes, %s seconds",
+					elapsedTimeString = String.format("Elapsed Time: %s days, %s hours, %s minutes, %s seconds",
 							formatter.format(days),
 							formatter.format(hours),
 							formatter.format(minutes),
-							formatter.format(tick));
+							formatter.format(seconds));
 				}
 			}
 		};

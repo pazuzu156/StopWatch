@@ -19,6 +19,8 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultCaret;
 
+import com.kalebklein.stopwatch.updater.UpdateCheck;
+
 public class AboutWindow extends JFrame
 {
 
@@ -32,25 +34,18 @@ public class AboutWindow extends JFrame
 	private boolean fontLoaded = false, iconLoaded = false;
 	private ImageIcon icon;
 	private JButton btnChangelog;
+	private JButton btnCheckForUpdates;
+	AboutWindow context = this;
+	JFrame contextFrom;
 
-	public AboutWindow()
+	public AboutWindow(JFrame contextFrom)
 	{
+		this.contextFrom = contextFrom;
 		initializeWindow();
 	}
 
 	private void initializeWindow()
 	{
-		// To display GUI as it would normally look in the OS
-		// Rather than the default Java look
-		try
-		{
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-
 		setFonts();
 		setIcon();
 
@@ -68,11 +63,11 @@ public class AboutWindow extends JFrame
 		contentPane.setLayout(null);
 
 		btnViewSite = new JButton("View My Site");
-		btnViewSite.setBounds(234, 237, 150, 23);
+		btnViewSite.setBounds(224, 235, 160, 26);
 		contentPane.add(btnViewSite);
 
 		btnViewSource = new JButton("View Source Code");
-		btnViewSource.setBounds(10, 235, 150, 26);
+		btnViewSource.setBounds(10, 235, 160, 26);
 		contentPane.add(btnViewSource);
 
 		txtrAbout = new JTextArea();
@@ -103,8 +98,12 @@ public class AboutWindow extends JFrame
 		txtrAbout.setCaretPosition(0);
 		
 		btnChangelog = new JButton("View Changelog");
-		btnChangelog.setBounds(10, 272, 374, 26);
+		btnChangelog.setBounds(10, 272, 160, 26);
 		contentPane.add(btnChangelog);
+		
+		btnCheckForUpdates = new JButton("Check for Updates");
+		btnCheckForUpdates.setBounds(224, 272, 160, 26);
+		contentPane.add(btnCheckForUpdates);
 
 		registerEventListeners();
 
@@ -114,6 +113,7 @@ public class AboutWindow extends JFrame
 			btnViewSource.setFont(new Font(appFont.getName(), Font.PLAIN, 12));
 			btnViewSite.setFont(new Font(appFont.getName(), Font.PLAIN, 12));
 			btnChangelog.setFont(new Font(appFont.getName(), Font.PLAIN, 12));
+			btnCheckForUpdates.setFont(new Font(appFont.getName(), Font.PLAIN, 12));
 		}
 	}
 
@@ -167,6 +167,13 @@ public class AboutWindow extends JFrame
 			public void actionPerformed(ActionEvent e)
 			{
 				openURL("http://cdn.kalebklein.com/sw/changelog.txt");
+			}
+		});
+		
+		// Event listener for update check
+		btnCheckForUpdates.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new UpdateCheck(context, contextFrom).run();
 			}
 		});
 	}
