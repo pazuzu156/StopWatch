@@ -16,10 +16,12 @@ import java.text.SimpleDateFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
@@ -28,8 +30,8 @@ public class StopWatchWindow extends JFrame
 {
 	private static final long serialVersionUID = -4764744825746547852L;
 	
-	public static final String VERSION = "1.2";
-	public static final int VERSION_CODE = 3;
+	public static final String VERSION = "1.2.2";
+	public static final int VERSION_CODE = 4;
 
 	boolean currentTimeTickerOn = false, stopWatchOn = false, isRestarted = true, isPaused = false;
 	Thread currentTimeTicker, stopWatchTicker, timeTrackerTicker;
@@ -216,6 +218,7 @@ public class StopWatchWindow extends JFrame
 			}
 		});
 
+		// Handle an event when start button is pressed
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
@@ -270,6 +273,7 @@ public class StopWatchWindow extends JFrame
 			}
 		});
 		
+		// Handle an event when the copy button is pressed
 		btnCopyTime.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
@@ -284,6 +288,17 @@ public class StopWatchWindow extends JFrame
 					StringSelection selection = new StringSelection(elapsedTimeString);
 					Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
 					clip.setContents(selection, null);
+					JOptionPane pane = new JOptionPane("Time has been copied to your clipboard", JOptionPane.INFORMATION_MESSAGE);
+					final JDialog dialog = pane.createDialog("Copy to Clipboard");
+					Timer timer = new Timer(2500, new ActionListener() {
+						public void actionPerformed(ActionEvent e)
+						{
+							dialog.dispose();
+						}
+					});
+					timer.setRepeats(false);
+					timer.start();
+					dialog.setVisible(true);
 				}
 			}
 		});
