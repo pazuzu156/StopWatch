@@ -4,7 +4,6 @@ import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -30,8 +29,8 @@ public class AboutWindow extends JFrame
 	private JTextArea txtrAbout;
 	private JScrollPane scrollPane;
 	private DefaultCaret caret;
-	private Font appFont;
-	private boolean fontLoaded = false, iconLoaded = false;
+	private FontLoader font;
+	private boolean iconLoaded = false;
 	private ImageIcon icon;
 	private JButton btnChangelog;
 	private JButton btnCheckForUpdates;
@@ -46,7 +45,7 @@ public class AboutWindow extends JFrame
 
 	private void initializeWindow()
 	{
-		setFonts();
+		initFontLoader();
 		setIcon();
 
 		setResizable(false);
@@ -107,28 +106,19 @@ public class AboutWindow extends JFrame
 
 		registerEventListeners();
 
-		if (fontLoaded)
+		if (font.isFontLoaded())
 		{
-			txtrAbout.setFont(new Font(appFont.getName(), Font.PLAIN, 12));
-			btnViewSource.setFont(new Font(appFont.getName(), Font.PLAIN, 12));
-			btnViewSite.setFont(new Font(appFont.getName(), Font.PLAIN, 12));
-			btnChangelog.setFont(new Font(appFont.getName(), Font.PLAIN, 12));
-			btnCheckForUpdates.setFont(new Font(appFont.getName(), Font.PLAIN, 12));
+			txtrAbout.setFont(font.applyFont(font.getFont(), Font.PLAIN, 12));
+			btnViewSource.setFont(font.applyFont(font.getFont(), Font.PLAIN, 12));
+			btnViewSite.setFont(font.applyFont(font.getFont(), Font.PLAIN, 12));
+			btnChangelog.setFont(font.applyFont(font.getFont(), Font.PLAIN, 12));
+			btnCheckForUpdates.setFont(font.applyFont(font.getFont(), Font.PLAIN, 12));
 		}
 	}
 
-	private void setFonts()
+	private void initFontLoader()
 	{
-		try
-		{
-			FileInputStream is = new FileInputStream("res/fonts/ubuntu.ttf");
-			appFont = Font.createFont(Font.TRUETYPE_FONT, is);
-			fontLoaded = true;
-		}
-		catch (Exception e)
-		{
-			System.out.println("Error loading fonts! Reverting to defaults.");
-		}
+		font = new FontLoader();
 	}
 
 	private void setIcon()

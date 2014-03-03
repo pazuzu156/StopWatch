@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.FileInputStream;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -46,9 +45,11 @@ public class StopWatchWindow extends JFrame
 	private JLabel lblCounter;
 	private JButton btnStart, btnPause, btnReset, btnAbout, btnCopyTime;
 
-	private Font appFont;
+//	private Font appFont;
 	private ImageIcon icon;
-	private boolean fontLoaded = false, iconLoaded = false;
+	private boolean iconLoaded = false;
+	
+	private FontLoader font;
 
 	public StopWatchWindow()
 	{
@@ -72,7 +73,7 @@ public class StopWatchWindow extends JFrame
 			e.printStackTrace();
 		}
 
-		setFonts();
+		initFontLoader();
 		setIcon();
 
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -132,33 +133,25 @@ public class StopWatchWindow extends JFrame
 
 		setVisible(true);
 
-		if (fontLoaded)
+		if (font.isFontLoaded())
 		{
-			lblCounter.setFont(new Font(appFont.getName(), Font.BOLD, 50));
-			btnAbout.setFont(new Font(appFont.getName(), Font.PLAIN, 12));
-			btnReset.setFont(new Font(appFont.getName(), Font.PLAIN, 12));
-			btnStart.setFont(new Font(appFont.getName(), Font.PLAIN, 12));
-			btnPause.setFont(new Font(appFont.getName(), Font.PLAIN, 12));
-			lblCounter.setFont(new Font(appFont.getName(), Font.BOLD, 50));
-			lblElapsedTime.setFont(new Font(appFont.getName(), Font.BOLD, 40));
-			lblCurrtime.setFont(new Font(appFont.getName(), Font.BOLD, 12));
-			lblCurrentTime.setFont(new Font(appFont.getName(), Font.BOLD, 12));
-			btnCopyTime.setFont(new Font(appFont.getName(), Font.PLAIN, 12));
+			lblCounter.setFont(font.applyFont(font.getFont(), Font.BOLD, 50));
+			btnAbout.setFont(font.applyFont(font.getFont(), Font.PLAIN, 12));
+			btnReset.setFont(font.applyFont(font.getFont(), Font.PLAIN, 12));
+			btnStart.setFont(font.applyFont(font.getFont(), Font.PLAIN, 12));
+			btnPause.setFont(font.applyFont(font.getFont(), Font.PLAIN, 12));
+			lblCounter.setFont(font.applyFont(font.getFont(), Font.BOLD, 50));
+			lblElapsedTime.setFont(font.applyFont(font.getFont(), Font.BOLD, 40));
+			lblCurrtime.setFont(font.applyFont(font.getFont(), Font.BOLD, 12));
+			lblCurrentTime.setFont(font.applyFont(font.getFont(), Font.BOLD, 12));
+			btnCopyTime.setFont(font.applyFont(font.getFont(), Font.PLAIN, 12));
+			
 		}
 	}
 
-	private void setFonts()
+	private void initFontLoader()
 	{
-		try
-		{
-			FileInputStream is = new FileInputStream("res/fonts/ubuntu.ttf");
-			appFont = Font.createFont(Font.TRUETYPE_FONT, is);
-			fontLoaded = true;
-		}
-		catch (Exception e)
-		{
-			System.out.println("Error loading fonts! Reverting to defaults.");
-		}
+		font = new FontLoader();
 	}
 
 	private void setIcon()
