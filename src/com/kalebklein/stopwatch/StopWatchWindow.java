@@ -29,8 +29,8 @@ public class StopWatchWindow extends JFrame
 {
 	private static final long serialVersionUID = -4764744825746547852L;
 	
-	public static final String VERSION = "1.2.2";
-	public static final int VERSION_CODE = 4;
+	public static final String VERSION = "1.2.3";
+	public static final int VERSION_CODE = 5;
 
 	boolean currentTimeTickerOn = false, stopWatchOn = false, isRestarted = true, isPaused = false;
 	Thread currentTimeTicker, stopWatchTicker, timeTrackerTicker;
@@ -255,6 +255,12 @@ public class StopWatchWindow extends JFrame
 				btnStart.setText("Start");
 				lblCounter.setText("00:00:00");
 				elapsedTimeString = null;
+				
+				// Reset all times to 0, so it doesn't attempt to
+				// continue tracking time
+				startTime = 0L;
+				stopTime = 0L;
+				pausedTime = 0L;
 			}
 		});
 
