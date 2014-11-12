@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=StopWatch
+Version=2.1.3
+Type=Application
+Terminal=false
+Categories=Utility;
+Icon=/usr/share/pixmaps/StopWatch/icon.png
+Exec=stopwatch

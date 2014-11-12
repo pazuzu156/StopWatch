@@ -1,0 +1,26 @@
+# Maintainer: Kaleb Klein <klein.jae@gmail.com>
+
+pkgname=stopwatch
+pkgver=1.2.3
+pkgrel=1
+pkgdesc="Lightweight desktop stopwatch built in Java"
+arch=(any)
+license=('GPL')
+url="http://www.kalebklein.com"
+_dlurl="http://cdn.kalebklein.com/sw/arch/StopWatch.jar"
+depends=('java-runtime')
+noextract=('StopWatch.jar')
+source=(stopwatch stopwatch.desktop ${_dlurl} icon.png)
+sha256sums=('b345e055591cb113010c95e25dd1c33221d43eb429d0370c8930ce811ab3a442'
+            '171b8c1059357a814e3ab4accaba5e236b9e975b0eec9fc0b43639e74c465804'
+            'dc8a1ef95cd4b7fe92e9535f7e239b4cdbf2b27764eea7d3d2178d4e57d603fd'
+            '2681219f50b93b77175df6db5d03f50aab3eab46707f8252a558a117f48521ef')
+
+package() {
+	cd "$srcdir"
+
+	install -D -m755 "${srcdir}/stopwatch" "${pkgdir}/usr/bin/stopwatch"
+	install -D -m644 "${srcdir}/StopWatch.jar" "${pkgdir}/opt/StopWatch/StopWatch.jar"
+	install -D -m644 "${srcdir}/icon.png" "${pkgdir}/usr/share/pixmaps/StopWatch/icon.png"
+	install -D -m644 "${srcdir}/stopwatch.desktop" "${pkgdir}/usr/share/applications/StopWatch.desktop"
+}

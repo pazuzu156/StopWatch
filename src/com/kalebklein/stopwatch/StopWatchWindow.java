@@ -63,15 +63,29 @@ public class StopWatchWindow extends JFrame
 	private void prepareWindow()
 	{
 		// To display GUI as it would normally look in the OS
-		// Rather than the default Java look
+		// Rather than the default Java look, linux gets Nimbus :)
 		try
 		{
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			if(System.getProperty("os.name").contains("Linux"))
+			{
+				for(UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels())
+				{
+					if("Nimbus".equals(info.getName()))
+					{
+						UIManager.setLookAndFeel(info.getClassName());
+					}
+				}
+			}
+			else
+			{
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			}
 		}
-		catch (Exception e)
+		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
+		
 
 		initFontLoader();
 		setIcon();
