@@ -1,3 +1,8 @@
 StopWatch.jar
-osx_linux/StopWatch.jar
 win32/StopWatch.exe
+osx/StopWatch.jar
+arch_linix/src/
+arch_linux/pkg/
+arch_linux/*.xz
+arch_linux/*.gz
+arch_linux/StopWatch.jar
