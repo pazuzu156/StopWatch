@@ -30,7 +30,7 @@ public class StopWatchWindow extends JFrame
 	private static final long serialVersionUID = -4764744825746547852L;
 	
 	public static final String VERSION = "1.2.3";
-	public static final int VERSION_CODE = 5;
+	public static final int VERSION_CODE = 6;
 
 	boolean currentTimeTickerOn = false, stopWatchOn = false, isRestarted = true, isPaused = false;
 	Thread currentTimeTicker, stopWatchTicker, timeTrackerTicker;
@@ -319,11 +319,15 @@ public class StopWatchWindow extends JFrame
 					String s = new String(formatter.format(hours) + ":" + formatter.format(minutes) + ":"
 							+ formatter.format(seconds));
 					lblCounter.setText(s);
+					
+					//DecimalFormat dc = new DecimalFormat("##");
+					//int daysc = Integer.parseInt(dc.format(days));
+					
 					elapsedTimeString = String.format("Elapsed Time: %s days, %s hours, %s minutes, %s seconds",
-							formatter.format(days),
-							formatter.format(hours),
-							formatter.format(minutes),
-							formatter.format(seconds));
+							days,
+							hours,
+							minutes,
+							seconds);
 				}
 			}
 		};
