@@ -1,0 +1,27 @@
+group 'kalebklein'
+version '1.2.3'
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = 1.6
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+mainClassName = "com.kalebklein.stopwatch.Launch"
+
+jar {
+    manifest {
+        attributes "Main-Class": "$mainClassName"
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
